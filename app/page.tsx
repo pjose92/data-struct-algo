@@ -12,6 +12,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Code, BookOpen, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { DataStructureViz } from "@/components/visualizations/DataStructureViz";
+import { AlgorithmViz } from "@/components/visualizations/AlgorithmViz";
 
 const topics = {
   dataStructures: [
@@ -231,6 +233,16 @@ function merge(left, right) {
 export default function Home() {
   const [activeTab, setActiveTab] = useState("dataStructures");
   const [selectedTopic, setSelectedTopic] = useState(topics.dataStructures[0]);
+
+  const renderVisualization = () => {
+    if (
+      selectedTopic.visualization.includes("sort") ||
+      selectedTopic.visualization.includes("search")
+    ) {
+      return <AlgorithmViz type={selectedTopic.visualization} />;
+    }
+    return <DataStructureViz type={selectedTopic.visualization} />;
+  };
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
@@ -316,7 +328,7 @@ export default function Home() {
                       <h3 className="font-semibold">Visualization</h3>
                     </div>
                     <div className="bg-muted rounded-lg p-4">
-                      render visualization here
+                      {renderVisualization()}
                     </div>
                   </div>
                 </div>
