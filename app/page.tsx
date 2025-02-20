@@ -1,4 +1,5 @@
 "use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -7,9 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-// import { ScrollArea } from "@/components/ui/scroll-area";
-// import { Code, BookOpen, Play } from "lucide-react";
-// import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Code, BookOpen, Play } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const topics = {
@@ -228,11 +229,13 @@ function merge(left, right) {
 };
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState("dataStructures");
+  const [selectedTopic, setSelectedTopic] = useState(topics.dataStructures[0]);
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-6">
-          <h1 className="text-4xl font-bold">ata Structures & Algorithms</h1>
+          <h1 className="text-4xl font-bold">Data Structures & Algorithms</h1>
           <p className="text-muted-foreground mt-2">
             Interactive guide to fundamental computer science concepts
           </p>
@@ -240,10 +243,16 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Tabs className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={(tab) => {
+            setActiveTab(tab);
+            setSelectedTopic(topics[tab as keyof typeof topics][0]);
+          }}
+          className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger>Data Structures</TabsTrigger>
-            <TabsTrigger>Algorithms</TabsTrigger>
+            <TabsTrigger value="dataStructures">Data Structures</TabsTrigger>
+            <TabsTrigger value="algorithms">Algorithms</TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -253,43 +262,57 @@ export default function Home() {
               <CardTitle>Topics</CardTitle>
             </CardHeader>
             <CardContent>
-              <div>
-                <div>
-                  <button className="w-full justify-start">Topic title</button>
+              <ScrollArea className="h-[70vh]">
+                <div className="space-y-2">
+                  {topics[activeTab as keyof typeof topics].map((topic) => (
+                    <Button
+                      key={topic.title}
+                      variant={
+                        selectedTopic.title === topic.title
+                          ? "secondary"
+                          : "ghost"
+                      }
+                      className="w-full justify-start"
+                      onClick={() => setSelectedTopic(topic)}>
+                      {topic.title}
+                    </Button>
+                  ))}
                 </div>
-              </div>
+              </ScrollArea>
             </CardContent>
           </Card>
 
           <div className="md:col-span-3 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Topic title</CardTitle>
-                <CardDescription>description</CardDescription>
+                <CardTitle>{selectedTopic.title}</CardTitle>
+                <CardDescription>{selectedTopic.description}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-2">
-                    {/* <BookOpen /> */}
+                    <BookOpen />
                     <div>
                       <h3 className="font-semibold">Example case use</h3>
-                      <p className="text-muted-foreground">topic example</p>
+                      <p className="text-muted-foreground">
+                        {selectedTopic.example}
+                      </p>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      {/* <Code /> */}
+                      <Code />
                       <h3 className="font-semibold">Implementation</h3>
                     </div>
                     <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
-                      <code>code here</code>
+                      <code>{selectedTopic.code}</code>
                     </pre>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      {/* <play /> */}
+                      <Play />
                       <h3 className="font-semibold">Visualization</h3>
                     </div>
                     <div className="bg-muted rounded-lg p-4">
