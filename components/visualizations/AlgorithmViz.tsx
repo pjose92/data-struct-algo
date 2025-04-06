@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+import React, { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 interface VisualizationProps {
   type: string;
@@ -19,7 +19,7 @@ interface Step {
 export function AlgorithmViz({ type }: VisualizationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [array, setArray] = useState<number[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  // const [inputValue, setInputValue] = useState('');
   const [sorting, setSorting] = useState(false);
   const [currentStep, setCurrentStep] = useState(-1);
   const [steps, setSteps] = useState<Step[]>([]);
@@ -32,13 +32,19 @@ export function AlgorithmViz({ type }: VisualizationProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (steps.length > 0 && currentStep >= 0) {
       const step = steps[currentStep];
-      drawArray(ctx, step.array, step.comparingIndices, step.swappedIndices, searchIndex);
+      drawArray(
+        ctx,
+        step.array,
+        step.comparingIndices,
+        step.swappedIndices,
+        searchIndex
+      );
     } else {
       drawArray(ctx, array, [], [], searchIndex);
     }
@@ -48,7 +54,7 @@ export function AlgorithmViz({ type }: VisualizationProps) {
     let intervalId: NodeJS.Timeout;
     if (isAutoPlaying && currentStep < steps.length - 1) {
       intervalId = setInterval(() => {
-        setCurrentStep(prev => {
+        setCurrentStep((prev) => {
           if (prev >= steps.length - 1) {
             setIsAutoPlaying(false);
             return prev;
@@ -74,9 +80,9 @@ export function AlgorithmViz({ type }: VisualizationProps) {
     const startY = 250;
 
     // Draw array access count
-    ctx.fillStyle = '#666';
-    ctx.font = '14px Arial';
-    ctx.textAlign = 'left';
+    ctx.fillStyle = "#666";
+    ctx.font = "14px Arial";
+    ctx.textAlign = "left";
     ctx.fillText(`Array Accesses: ${currentStep + 1}`, 10, 30);
 
     arr.forEach((value, index) => {
@@ -85,15 +91,15 @@ export function AlgorithmViz({ type }: VisualizationProps) {
       const y = startY - height;
 
       // Determine bar color based on its state
-      let color = '#4dabf7'; // Default blue
+      let color = "#4dabf7"; // Default blue
       if (comparingIndices.includes(index)) {
-        color = '#ffd43b'; // Yellow for comparing
+        color = "#ffd43b"; // Yellow for comparing
       }
       if (swappedIndices.includes(index)) {
-        color = '#ff6b6b'; // Red for swapped
+        color = "#ff6b6b"; // Red for swapped
       }
       if (index === searchHighlight) {
-        color = '#4ade80'; // Green for found element
+        color = "#4ade80"; // Green for found element
       }
 
       // Draw bar
@@ -101,19 +107,19 @@ export function AlgorithmViz({ type }: VisualizationProps) {
       ctx.fillRect(x, y, barWidth, height);
 
       // Draw border
-      ctx.strokeStyle = '#333';
+      ctx.strokeStyle = "#333";
       ctx.lineWidth = 1;
       ctx.strokeRect(x, y, barWidth, height);
 
       // Draw value
-      ctx.fillStyle = '#333';
-      ctx.font = '14px Arial';
-      ctx.textAlign = 'center';
+      ctx.fillStyle = "#333";
+      ctx.font = "14px Arial";
+      ctx.textAlign = "center";
       ctx.fillText(value.toString(), x + barWidth / 2, startY + 20);
 
       // Draw index
-      ctx.fillStyle = '#666';
-      ctx.font = '12px Arial';
+      ctx.fillStyle = "#666";
+      ctx.font = "12px Arial";
       ctx.fillText(`[${index}]`, x + barWidth / 2, startY + 35);
     });
   };
@@ -140,12 +146,14 @@ export function AlgorithmViz({ type }: VisualizationProps) {
           array: [...arr],
           description: `Comparing elements at indices ${j} and ${j + 1}`,
           comparingIndices: [j, j + 1],
-          swappedIndices: []
+          swappedIndices: [],
         };
 
         if (arr[j] > arr[j + 1]) {
           [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-          step.description += ` and swapping them because ${arr[j + 1]} > ${arr[j]}`;
+          step.description += ` and swapping them because ${arr[j + 1]} > ${
+            arr[j]
+          }`;
           step.swappedIndices = [j, j + 1];
         }
 
@@ -171,7 +179,7 @@ export function AlgorithmViz({ type }: VisualizationProps) {
         array: [...arr],
         description: `Choosing pivot value: ${pivot}`,
         comparingIndices: [high],
-        swappedIndices: []
+        swappedIndices: [],
       });
 
       for (let j = low; j < high; j++) {
@@ -179,7 +187,7 @@ export function AlgorithmViz({ type }: VisualizationProps) {
           array: [...arr],
           description: `Comparing element ${arr[j]} with pivot ${pivot}`,
           comparingIndices: [j, high],
-          swappedIndices: []
+          swappedIndices: [],
         });
 
         if (arr[j] < pivot) {
@@ -189,7 +197,7 @@ export function AlgorithmViz({ type }: VisualizationProps) {
             array: [...arr],
             description: `Swapping elements ${arr[i]} and ${arr[j]}`,
             comparingIndices: [j, high],
-            swappedIndices: [i, j]
+            swappedIndices: [i, j],
           });
         }
       }
@@ -199,7 +207,7 @@ export function AlgorithmViz({ type }: VisualizationProps) {
         array: [...arr],
         description: `Placing pivot ${pivot} in its final position`,
         comparingIndices: [],
-        swappedIndices: [i + 1, high]
+        swappedIndices: [i + 1, high],
       });
 
       return i + 1;
@@ -222,41 +230,41 @@ export function AlgorithmViz({ type }: VisualizationProps) {
   const binarySearch = () => {
     const sortedArray = [...array].sort((a, b) => a - b);
     setArray(sortedArray);
-    
+
     const newSteps: Step[] = [];
     let left = 0;
     let right = sortedArray.length - 1;
-    
+
     while (left <= right) {
       const mid = Math.floor((left + right) / 2);
-      
+
       newSteps.push({
         array: sortedArray,
         description: `Checking middle element at index ${mid}: ${sortedArray[mid]}`,
         comparingIndices: [mid],
-        swappedIndices: []
+        swappedIndices: [],
       });
-      
+
       if (sortedArray[mid] === searchValue) {
         newSteps.push({
           array: sortedArray,
           description: `Found ${searchValue} at index ${mid}!`,
           comparingIndices: [],
-          swappedIndices: []
+          swappedIndices: [],
         });
         setSearchIndex(mid);
         setSteps(newSteps);
         setCurrentStep(0);
         return;
       }
-      
+
       if (sortedArray[mid] < searchValue) {
         left = mid + 1;
         newSteps.push({
           array: sortedArray,
           description: `${searchValue} is greater than ${sortedArray[mid]}, searching right half`,
           comparingIndices: [],
-          swappedIndices: []
+          swappedIndices: [],
         });
       } else {
         right = mid - 1;
@@ -264,18 +272,18 @@ export function AlgorithmViz({ type }: VisualizationProps) {
           array: sortedArray,
           description: `${searchValue} is less than ${sortedArray[mid]}, searching left half`,
           comparingIndices: [],
-          swappedIndices: []
+          swappedIndices: [],
         });
       }
     }
-    
+
     newSteps.push({
       array: sortedArray,
       description: `${searchValue} not found in the array`,
       comparingIndices: [],
-      swappedIndices: []
+      swappedIndices: [],
     });
-    
+
     setSearchIndex(-1);
     setSteps(newSteps);
     setCurrentStep(0);
@@ -289,11 +297,11 @@ export function AlgorithmViz({ type }: VisualizationProps) {
 
   const getAlgorithmDescription = () => {
     switch (type) {
-      case 'bubble-sort-viz':
+      case "bubble-sort-viz":
         return "Bubble Sort repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.";
-      case 'quick-sort-viz':
+      case "quick-sort-viz":
         return "Quick Sort picks a 'pivot' element and partitions the array around it, then recursively sorts the sub-arrays.";
-      case 'binary-search-viz':
+      case "binary-search-viz":
         return "Binary Search efficiently finds items in a sorted array by repeatedly dividing the search interval in half.";
       default:
         return "";
@@ -305,12 +313,14 @@ export function AlgorithmViz({ type }: VisualizationProps) {
       <div className="space-y-4">
         <div className="flex gap-2">
           <Button onClick={generateRandomArray}>Generate Random Array</Button>
-          {type.includes('sort') && (
-            <Button onClick={type === 'bubble-sort-viz' ? bubbleSort : quickSort} disabled={sorting}>
+          {type.includes("sort") && (
+            <Button
+              onClick={type === "bubble-sort-viz" ? bubbleSort : quickSort}
+              disabled={sorting}>
               Sort
             </Button>
           )}
-          {type === 'binary-search-viz' && (
+          {type === "binary-search-viz" && (
             <>
               <Input
                 type="number"
@@ -323,25 +333,21 @@ export function AlgorithmViz({ type }: VisualizationProps) {
             </>
           )}
         </div>
-        
+
         {steps.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center gap-4">
               <Button
                 onClick={() => visualizeStep(currentStep - 1)}
-                disabled={currentStep <= 0}
-              >
+                disabled={currentStep <= 0}>
                 Previous Step
               </Button>
-              <Button
-                onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-              >
+              <Button onClick={() => setIsAutoPlaying(!isAutoPlaying)}>
                 {isAutoPlaying ? "Pause" : "Auto Play"}
               </Button>
               <Button
                 onClick={() => visualizeStep(currentStep + 1)}
-                disabled={currentStep >= steps.length - 1}
-              >
+                disabled={currentStep >= steps.length - 1}>
                 Next Step
               </Button>
               <div className="flex items-center gap-2">
@@ -358,7 +364,7 @@ export function AlgorithmViz({ type }: VisualizationProps) {
                 <span className="text-sm">{speed}ms</span>
               </div>
             </div>
-            
+
             <Card className="p-4 bg-muted">
               <p className="text-sm font-medium">
                 Step {currentStep + 1} of {steps.length}:
